@@ -1,0 +1,43 @@
+CREATE DATABASE chess;
+use chess;
+CREATE TABLE games(
+    id int AUTO_INCREMENT NOT NULL,
+    castleBlackLeft tinyint,
+    castleBlackRight tinyint,
+    castleWhiteLeft tinyint,
+    castleWhiteRight tinyint,
+    created int NOT NULL Default(UNIX_TIMESTAMP()),
+    ended int,
+    moveId int NOT NULL Default(0),
+    started int,
+    tokenBlack varchar(30) NOT NULL,
+    tokenWhite varchar(30) NOT NULL,
+    PRIMARY KEY(id)
+);
+CREATE TABLE moves(
+    id int AUTO_INCREMENT NOT NULL,
+    gameId int NOT NULL,
+    history varchar(13),
+    moveId int NOT NULL Default(0),
+    positions varchar(64) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY (gameID) REFERENCES games(id)
+);
+CREATE TABLE tokens(
+    id int AUTO_INCREMENT NOT NULL,
+    created int NOT NULL,
+    IPv4 varchar(15) NOT NULL,
+    IPv6 varchar(50) NOT NULL,
+    token varchar(30) NOT NULL,
+    PRIMARY KEY(id)
+);
+CREATE TABLE chats(
+    id int AUTO_INCREMENT NOT NULL,
+    created int NOT NULL Default(UNIX_TIMESTAMP()),
+    gameId int NOT NULL,
+    idBlack int,
+    idWhite int,
+    message varchar(1023) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY (gameID) REFERENCES games(id)
+);
