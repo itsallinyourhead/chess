@@ -1,0 +1,123 @@
+server {
+    listen                          [::]:443 http2 ssl;
+    listen                          443 http2 ssl;
+    server_name                     chess.example.com;
+
+    ssl_certificate                 ../certs/example.com/chained.pem;
+    ssl_certificate_key             ../certs/example.com/private.pem;
+    ssl_stapling_file               ../certs/example.com/stapling.pem;
+
+    location @blackhole {
+            return                  444;
+    }
+    location ~\.(br|gz)$ {
+            return                  444;
+    }
+    location ~^/(favicon\.ico|robots\.txt|serviceWorker\.js)$ {
+            try_files               $uri =444;
+    }
+    location ~^/(css|js|pics)/ {
+            try_files               $uri =444;
+    }
+    location ~^/(start|)$ {
+            access_log              logs/chess.example.com https;
+            #add_header              Content-Security-Policy "base-uri 'none';connect-src 'self' https://ipv4.example.com https://ipv6.example.com https://wss.example.com:5000 wss://wss.example.com:5000;default-src 'none';form-action 'none';frame-ancestors 'none';img-src data: 'self';script-src 'self' 'unsafe-inline';style-src 'self' 'unsafe-inline'" always;
+            add_header              Permissions-Policy "geolocation=()" always;
+            add_header              Referrer-Policy same-origin always;
+            add_header              Strict-Transport-Security 'includeSubDomains;max-age=63072000' always;
+            add_header              X-Content-Type-Options nosniff always;
+            add_header              X-Frame-Options sameorigin always;
+            add_header              X-Xss-Protection '1;mode=block' always;
+            error_log               logs/error;
+            expires                 0;
+            include                 fastcgi_params;
+            fastcgi_pass            unix:/run/php/php8.2-fpm.sock;
+            fastcgi_param           SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            try_files               /controllers/DefaultController.php =444;
+    }
+
+    location ~^/ {
+            return                  444;
+    }
+
+    root                            domains/example.com/chess;
+}
+server {
+    #make sure there is no IPv6 dns record pointing to this subdomain
+    listen                          443 http2 ssl;
+    server_name                     ipv4.example.com;
+
+    ssl_certificate                 ../certs/example.com/chained.pem;
+    ssl_certificate_key             ../certs/example.com/private.pem;
+    ssl_stapling_file               ../certs/example.com/stapling.pem;
+
+    location @blackhole {
+            return                  444;
+    }
+    location ~^/chess$ {
+            add_header              Access-Control-Allow-Headers "x-requested-with";
+            add_header              Access-Control-Allow-Origin "https://chess.example.com";
+            add_header              Cache-Control "no-cache,no-store,must-revalidate";
+            add_header              Pragma "no-cache";
+            expires                 0;
+            include                 fastcgi_params;
+            fastcgi_pass            unix:/run/php/php8.2-fpm.sock;
+            fastcgi_param           SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            try_files               $uri.php =444;
+    }
+    location ~^/ {
+            return                  444;
+    }
+
+    root                            domains/example.com/ipv6;
+}
+server {
+    #make sure there is no IPv4 dns record pointing to this subdomain
+    listen                          [::]:443 http2 ssl;
+    server_name                     ipv6.example.com;
+
+    ssl_certificate                 ../certs/example.com/chained.pem;
+    ssl_certificate_key             ../certs/example.com/private.pem;
+    ssl_stapling_file               ../certs/example.com/stapling.pem;
+
+    location @blackhole {
+            return                  444;
+    }
+    location ~^/chess$ {
+            add_header              Access-Control-Allow-Headers "x-requested-with";
+            add_header              Access-Control-Allow-Origin "https://chess.example.com";
+            add_header              Cache-Control "no-cache,no-store,must-revalidate";
+            add_header              Pragma "no-cache";
+            expires                 0;
+            include                 fastcgi_params;
+            fastcgi_pass            unix:/run/php/php8.2-fpm.sock;
+            fastcgi_param           SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            try_files               $uri.php =444;
+    }
+    location ~^/ {
+            return                  444;
+    }
+
+    root                            domains/example.com/ipv6;
+}
+server {
+    #enter your servers ip address at proxy_pass directive
+    listen                          [::]:5000 http2 ssl;
+    listen                          5000 http2 ssl;
+    server_name                     wss.example.com;
+
+    ssl_certificate                 ../certs/example.com/chained.pem;
+    ssl_certificate_key             ../certs/example.com/private.pem;
+    ssl_stapling_file               ../certs/example.com/stapling.pem;
+
+    access_log                      logs/wss.example.com https;
+
+    location / {
+        proxy_http_version          1.1;
+        proxy_pass                  http://<your-servers-ip-address>:5001;
+        proxy_set_header            Connection "upgrade";
+        proxy_set_header            Host $http_host;
+        proxy_set_header            Upgrade $http_upgrade;
+        proxy_set_header            X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
