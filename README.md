@@ -27,7 +27,7 @@ Upload all files except README.md and BoardForReadme.png to your server.
 
 2. Creation of database
 
-See database.txt file.
+See database.txt file.<br>
 Enter your database credentials in chess/config/db.ini and nodejs/chess.js.
 
 3. Configuration of webserver
@@ -43,5 +43,5 @@ Install packages:<br>
 npm install mysql -g<br>
 npm install websocket -g</pre>
 
-Navigate via SSH to nodejs/chess.js and start it with<br>
+Navigate via SSH to nodejs/chess.js and start it with:<br>
 <pre>forever start chess.js</pre>
