@@ -2,7 +2,7 @@
 
 <b>Introduction</b>
 
-You can see an example at https://chess.neverwasinparis.com.<br>
+You can see an example on https://chess.neverwasinparis.com.<br>
 Play chess online or offline with a browser. <br>
 <br>
 
