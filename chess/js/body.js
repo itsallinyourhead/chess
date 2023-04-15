@@ -1022,9 +1022,14 @@ function IsJsonString(str) {
 }
 // Display partner network status.
 function AsidePartner(partnerStatus) {
-  Attribute(document.getElementById('asidePartner'), 'innerHTML', '<span class="' + ('Black' === color ? 'White' : 'Black') + 'P">' + ('Black' === color ? 'White' : 'Black') + '</span><span> player is </span><span class="' + partnerStatus + '">' + partnerStatus + '</span><span>.</span>');
-  ClassList(document.getElementById('invitationLinkOuter'), 'online' === partnerStatus ? 'add' : 'remove', 'none');
   let params = new URLSearchParams(location.search);
+  if ('undefined' === typeof color) {
+    var ownColor = params.get('token') && 'b' === params.get('token')[0] ? 'Black' : 'White';
+  } else {
+    var ownColor = color;
+  }
+  Attribute(document.getElementById('asidePartner'), 'innerHTML', '<span class="' + ('Black' === ownColor ? 'White' : 'Black') + 'P">' + ('Black' === ownColor ? 'White' : 'Black') + '</span><span> player is </span><span class="' + partnerStatus + '">' + partnerStatus + '</span><span>.</span>');
+  ClassList(document.getElementById('invitationLinkOuter'), 'online' === partnerStatus ? 'add' : 'remove', 'none');
   ClassList(document.getElementById('settingsInvitationLinkOuter'), 'online' === partnerStatus || params.get('token') ? 'remove' : 'add', 'none');
   if (document.getElementById('settingsInvitationLinkOuter')) {
     document.getElementById('settingsInvitationLink').checked = 'online' === partnerStatus ? !1 : !0;
@@ -1289,6 +1294,11 @@ function GetIP(IPURL, token, message) {
   let req = new XMLHttpRequest, This = this;
   req.addEventListener('readystatechange', function() {
     3 < req.readyState && StartWS(token, message);
+  });
+  req.addEventListener('error', function() {
+    let subdomain = IPURL.substring(IPURL.indexOf('/') + 1, IPURL.indexOf('.'));
+    subdomain = 'IPv' + (0 <= subdomain.indexOf('4') ? '4' : '6');
+    console.log('It seems like ' + subdomain + ' is not supported by the client. No problem. Continuing with IPv' + (0 <= subdomain.indexOf('4') ? '6' : '4') + ' only.');
   });
   req.addEventListener('timeout', function() {
     console.log('Error: timeout');
