@@ -56,7 +56,7 @@ document.getElementById('overlayCloseInput') && document.getElementById('overlay
 function NewGame() {
   if (this.checked) {
     for (let i = 0, elem = document.getElementById('chooseOuter').getElementsByTagName('input'); i < elem.length; ++i) {
-      !('offline' === mode && 'chooseColor' === elem[i].name) && elem[i].removeAttribute('disabled');
+      !('undefined' !== typeof mode && 'offline' === mode && 'chooseColor' === elem[i].name) && elem[i].removeAttribute('disabled');
     }
     ClassList(document.getElementById('startGameWarning'), new URLSearchParams(location.search).get('token') ? 'remove' : 'add', 'hidden');
     ClassList(document.getElementById('chooseOuter'), 'remove', 'none');
