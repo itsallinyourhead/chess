@@ -230,7 +230,7 @@
     </main>
     <aside>
         <input class="overlayVisibility" id="overlayDisplay" type="checkbox">
-        <label class="overlayLabel" for="overlayDisplay" id="overlayLabel" tabindex="1">Settings</label>
+        <label class="overlayLabel" for="overlayDisplay" id="overlayLabel" tabindex="1">Show Settings</label>
         <div class="overlay">
             <label class="overlayTitle">Settings</label>
             <input class="overlayCloseInput" id="overlayCloseInput" type="radio">
