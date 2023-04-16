@@ -42,7 +42,6 @@ aside {
 #asideMessageNew {
     overflow-x: hidden;
     resize: none;
-    width: calc(100% - 6px);
 }
 #asideMessagesOld {
     border: #000 1px solid;
